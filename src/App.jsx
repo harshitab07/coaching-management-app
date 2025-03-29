@@ -5,12 +5,14 @@ import Login from './pages/auth/Login';
 import ForgotPassword from './pages/auth/Forgot';
 import Students from './pages/Students';
 import Teachers from './pages/Teachers';
+import Dashboard from './pages/Dashboard';
 
 function App() {
 
   return (
     <>
     <Routes>
+      <Route path='/' element={<Dashboard />} />
       <Route path='/register' element={<Register />} />
       <Route path='/login' element={<Login />} />
       <Route path='/forgot-password' element={<ForgotPassword />} />

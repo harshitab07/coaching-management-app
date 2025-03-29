@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/auth";
+import "../../styles/navbar.css";
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
@@ -8,67 +9,46 @@ const Header = () => {
     setAuth({
       ...auth,
       user: null,
-      token: ''
+      token: "",
     });
 
-    localStorage.removeItem('auth');
+    localStorage.removeItem("auth");
   };
 
   return (
     <>
-    <nav className="navbar navbar-expand-lg bg-body-tertiary header">
-      <div className="container-fluid">
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarTogglerDemo01"
-          aria-controls="navbarTogglerDemo01"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
-        <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <NavLink to="/" className="nav-link">
-                Home
-              </NavLink>
-            </li>
+      <nav className="navbar bg-body-tertiary">
+        <div className="container flex-row">
+          <NavLink className="navbar-brand" to="/">
+            My-Coaching
+          </NavLink>
+          <form class="d-flex header-buttons">
             {!auth.user ? (
               <>
-                <li className="nav-item">
-                  <NavLink to="/register" className="nav-link">
-                    Signup
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink to="/login" className="nav-link">
-                    Login
-                  </NavLink>
-                </li>
+                <button class="btn btn-sm btn-outline-secondary" type="button">
+                  <NavLink to="/login" className="nav-link">Log In</NavLink>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" type="button">
+                  <NavLink to="/register" className="nav-link">Sign Up</NavLink>
+                </button>
               </>
             ) : (
-              <li class="nav-item dropdown">
-              <div>
-                <div className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  {auth.user.name}
-                </div>
-                <ul className="dropdown-menu">
-                  <li><NavLink className="dropdown-item" to="/dashboard">Dashboard</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/students">Students</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/teachers">Teachers</NavLink></li>
-                  <li><NavLink className="dropdown-item" to='/login' onClick={handleLogout} >Logout</NavLink></li>
-                </ul>
-                </div>
-            </li>
+              <>
+                <button class="btn btn-sm btn-outline-primary" type="button">
+                  <NavLink to="/students">Students</NavLink>
+                </button>
+                <button class="btn btn-sm btn-outline-primary" type="button">
+                <NavLink to="/students">Students</NavLink>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" type="button" onClick={handleLogout}>
+                Logout
+                </button>
+              </>
             )}
-          </ul>
+          </form>
         </div>
-      </div>
-    </nav>
-  </>
+      </nav>
+    </>
   );
 };
 
