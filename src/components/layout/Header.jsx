@@ -22,26 +22,50 @@ const Header = () => {
           <NavLink className="navbar-brand" to="/">
             My-Coaching
           </NavLink>
-          <form class="d-flex header-buttons">
+          <form className="d-flex header-buttons">
             {!auth.user ? (
               <>
-                <button class="btn btn-sm btn-outline-secondary" type="button">
-                  <NavLink to="/login" className="nav-link">Log In</NavLink>
+                <button
+                  className="btn btn-sm btn-outline-secondary"
+                  type="button"
+                >
+                  <NavLink to="/login" className="nav-link">
+                    Log In
+                  </NavLink>
                 </button>
-                <button class="btn btn-sm btn-outline-secondary" type="button">
-                  <NavLink to="/register" className="nav-link">Sign Up</NavLink>
+                <button
+                  className="btn btn-sm btn-outline-secondary"
+                  type="button"
+                >
+                  <NavLink to="/register" className="nav-link">
+                    Sign Up
+                  </NavLink>
                 </button>
               </>
             ) : (
               <>
-                <button class="btn btn-sm btn-outline-primary" type="button">
-                  <NavLink to="/students">Students</NavLink>
+                <button
+                  className="btn btn-sm btn-outline-primary"
+                  type="button"
+                >
+                  <NavLink to="/students" className="nav-link">
+                    Students
+                  </NavLink>
                 </button>
-                <button class="btn btn-sm btn-outline-primary" type="button">
-                <NavLink to="/students">Students</NavLink>
+                <button
+                  className="btn btn-sm btn-outline-primary"
+                  type="button"
+                >
+                  <NavLink to="/teachers" className="nav-link">
+                    Teachers
+                  </NavLink>
                 </button>
-                <button class="btn btn-sm btn-outline-secondary" type="button" onClick={handleLogout}>
-                Logout
+                <button
+                  className="btn btn-sm btn-outline-secondary"
+                  type="button"
+                  onClick={handleLogout}
+                >
+                  Logout
                 </button>
               </>
             )}
