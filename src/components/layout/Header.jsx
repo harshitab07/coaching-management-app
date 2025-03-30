@@ -1,9 +1,10 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import "../../styles/navbar.css";
 
 const Header = () => {
+  const navigate = useNavigate();
   const [auth, setAuth] = useAuth();
   const handleLogout = () => {
     setAuth({
@@ -13,6 +14,7 @@ const Header = () => {
     });
 
     localStorage.removeItem("auth");
+    navigate('/login');
   };
 
   return (

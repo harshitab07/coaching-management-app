@@ -29,9 +29,6 @@ const CreateNewEntryModal = ({ id, type }) => {
             >
               Close
             </button>
-            <button type="button" className="btn btn-primary">
-              Create {type}
-            </button>
           </div>
         </div>
       </div>
