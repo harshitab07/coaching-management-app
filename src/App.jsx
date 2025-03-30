@@ -6,6 +6,7 @@ import ForgotPassword from './pages/auth/Forgot';
 import Students from './pages/Students';
 import Teachers from './pages/Teachers';
 import Dashboard from './pages/Dashboard';
+import Student from './pages/Student';
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
       <Route path='/forgot-password' element={<ForgotPassword />} />
       <Route path='/students' element={<Students />} />
       <Route path='/teachers' element={<Teachers />} />
+      <Route path='/student/:id' element={<Student />} />
     </Routes>
     </>
   )

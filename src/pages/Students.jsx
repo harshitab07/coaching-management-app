@@ -5,6 +5,7 @@ import FetchAllStudentsFeesApi from "../utils/FetchAllStudentsFeesApi";
 import '../styles/students.css';
 import { parseDate } from "../utils/CommonFunctions";
 import FetchAllStudentsApi from "../utils/FetchAllStudentsApi";
+import { NavLink } from "react-router-dom";
 
 const Students = () => {
   const studentDataTemp = [
@@ -164,7 +165,7 @@ const Students = () => {
                         {student.is_active ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td>{`${student.first_name} ${student.last_name}`}</td>
+                    <td><NavLink to={`/student/${student._id}`}>{`${student.first_name} ${student.last_name}`}</NavLink></td>
                     <td>{student.phone_number}</td>
                     <td>{student.date_of_joining}</td>
                     <td>
