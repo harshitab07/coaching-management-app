@@ -1,10 +1,8 @@
-import React from 'react';
 import axios from 'axios';
 
-const fetchAllStudentsApi = async () => {
-    const response = await axios.post(
+const FetchAllStudentsApi = async () => {
+    const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/v1/students/get-students`,
-        {},
         {
           headers: {
             'Content-Type': 'application/json',
@@ -15,4 +13,4 @@ const fetchAllStudentsApi = async () => {
       return response;
 }
 
-export default fetchAllStudentsApi
+export default FetchAllStudentsApi;

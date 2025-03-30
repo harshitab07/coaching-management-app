@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import Layout from "../components/layout/layout";
+import FetchAllStudentsFeesApi from "../utils/FetchAllStudentsFeesApi";
+import '../styles/students.css';
+import { parseDate } from "../utils/CommonFunctions";
+import FetchAllStudentsApi from "../utils/FetchAllStudentsApi";
 
 const Students = () => {
-  const studentData = [
+  const studentDataTemp = [
     {
       id: 13,
       user_id: "65123abcde789",
@@ -50,7 +55,7 @@ const Students = () => {
     },
   ];
 
-  const studentFeesData = [
+  const studentFeesDataTemp = [
     {
       student_id: "65123abcde789",
       monthly_fees: 5000,
@@ -74,12 +79,38 @@ const Students = () => {
     },
   ];
 
+  const [studentData, setStudentData] = useState([]);
+  const [studentFeesData, setStudentFeesData] = useState([]);
+  const fetchStudents = async() => {
+    try {
+      const res = await FetchAllStudentsApi();
+      if (!res.data.success) toast.error(res.data.message);
+      else {
+        setStudentData(res.data.data.students);
+      }
+
+      const feesResponse = await FetchAllStudentsFeesApi();
+      if (!res.data.success) toast.error(res.data.message);
+      else {
+        setStudentFeesData(feesResponse.data.data);
+      }
+    } catch (error) {
+      console.log("Students fetching failed", { error });
+      toast.error("Failed to fetch students");
+    }
+  }
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
   const calculateFeeStatus = (student) => {
-    const feeRecord = studentFeesData.find(fee => fee.student_id === student.user_id);
+    const feeRecord = studentFeesData.find(fee => fee.student_id === student._id);
     if (!feeRecord) return { feeStatus: "Unknown", unpaidAmount: "-" };
     
-    const { monthly_fees, total_fees_paid } = feeRecord;
-    const doj = new Date(student.date_of_joining);
+    const monthly_fees = feeRecord.monthly_fees;
+    const total_fees_paid = feeRecord?.total_fees_paid ? feeRecord?.total_fees_paid : 0;
+    const doj = parseDate(student.date_of_joining);
     const today = new Date();
     
     console.log(`Calculating fee status for ${student.first_name} ${student.last_name}`);
@@ -105,8 +136,8 @@ const Students = () => {
 };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
-      <Layout title="My-Coaching Management App : Students">
+    <Layout title="My-Coaching Management App : Students">
+    <div className="d-flex flex-column justify-content-center align-items-center students_table ">
         <h2 className="text-center text-primary mb-4">Student Data</h2>
         <div className="table-responsive w-75 mx-auto">
           <table className="table table-hover table-striped table-bordered shadow-sm">
@@ -151,8 +182,8 @@ const Students = () => {
             </tbody>
           </table>
         </div>
-      </Layout>
     </div>
+    </Layout>
   );
 };
 

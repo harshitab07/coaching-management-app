@@ -16,6 +16,11 @@ const StudentForm = () => {
   const [doj, setDoj] = useState("");
   const role = "student";
 
+  const convertDateToDisplayFormat = (dateString) => {
+    const [year, month, day] = dateString.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -25,7 +30,9 @@ const StudentForm = () => {
         'pincode': pinCode,
         'state': state
       }
-      const res = await CreateStudentApi(firstName, lastName, email, phone, address, monthlyFees, doj, role);
+
+      const dojConverted =  convertDateToDisplayFormat(doj);
+      const res = await CreateStudentApi(firstName, lastName, email, phone, address, monthlyFees, dojConverted, role);
 
       if (!res.data.isResultCorrect) toast.error(res.data.message);
       else {
