@@ -2,6 +2,7 @@
 
 .form-container {
     display: flex;
+    gap: 1rem;
     align-items: center;
     justify-content: center;
     min-height: 71.7vh;
