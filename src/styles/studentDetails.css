@@ -1,0 +1,31 @@
+.students_details_container {
+    margin-top: 2rem;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 5rem;
+    padding: 0 5rem;
+}
+
+@media (max-width: 1071px) {
+    .students_details_container {
+        justify-content: center;
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 754px) {
+    .students_details_container {
+        padding: 0 2rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .students_details_container {
+        gap: .5rem;
+        margin-top: 1rem;
+    }
+    .create_form_row_details {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Layout from "../components/layout/layout";
-import FetchAllStudentsFeesApi from "../utils/FetchAllStudentsFeesApi";
 import '../styles/students.css';
-import { parseDate } from "../utils/CommonFunctions";
-import FetchAllStudentsApi from "../utils/FetchAllStudentsApi";
+import FetchAllStudentsApi from "../utils/students/FetchAllStudentsApi";
 import { NavLink } from "react-router-dom";
 
 const Students = () => {
@@ -56,44 +54,13 @@ const Students = () => {
     },
   ];
 
-  const studentFeesDataTemp = [
-    {
-      student_id: "65123abcde789",
-      monthly_fees: 5000,
-      total_fees_paid: 5000,
-      last_paid_amount: 5000,
-      last_paid_date: "2025-02-02",
-    },
-    {
-      student_id: "65123fghij123",
-      monthly_fees: 4500,
-      total_fees_paid: 9000,
-      last_paid_amount: 4500,
-      last_paid_date: "2025-03-01",
-    },
-    {
-      student_id: "65123klmno456",
-      monthly_fees: 5000,
-      total_fees_paid: 15000,
-      last_paid_amount: 5000,
-      last_paid_date: "2025-04-01",
-    },
-  ];
-
   const [studentData, setStudentData] = useState([]);
-  const [studentFeesData, setStudentFeesData] = useState([]);
   const fetchStudents = async() => {
     try {
       const res = await FetchAllStudentsApi();
       if (!res.data.success) toast.error(res.data.message);
       else {
         setStudentData(res.data.data.students);
-      }
-
-      const feesResponse = await FetchAllStudentsFeesApi();
-      if (!res.data.success) toast.error(res.data.message);
-      else {
-        setStudentFeesData(feesResponse.data.data);
       }
     } catch (error) {
       console.log("Students fetching failed", { error });
@@ -104,37 +71,6 @@ const Students = () => {
   useEffect(() => {
     fetchStudents();
   }, []);
-
-  const calculateFeeStatus = (student) => {
-    const feeRecord = studentFeesData.find(fee => fee.student_id === student._id);
-    if (!feeRecord) return { feeStatus: "Unknown", unpaidAmount: "-" };
-    
-    const monthly_fees = feeRecord.monthly_fees;
-    const total_fees_paid = feeRecord?.total_fees_paid ? feeRecord?.total_fees_paid : 0;
-    const doj = parseDate(student.date_of_joining);
-    const today = new Date();
-    
-    console.log(`Calculating fee status for ${student.first_name} ${student.last_name}`);
-    console.log(`DOJ: ${doj.toDateString()}, Today: ${today.toDateString()}`);
-    
-    // Get the months from DOJ and today
-    const monthsElapsed = (today.getFullYear() - doj.getFullYear()) * 12 + (today.getMonth() - doj.getMonth());
-    
-    // Ensure at least 1 month is counted
-    const totalMonths = monthsElapsed + 1;
-    console.log(`Months Elapsed: ${totalMonths}`);
-    
-    // Calculate total due amount based on months elapsed
-    const totalDue = totalMonths * monthly_fees;
-    console.log(`Total Due: ${totalDue}, Total Fees Paid: ${total_fees_paid}`);
-    
-    // Determine unpaid amount and fee status
-    const unpaidAmount = Math.max(totalDue - total_fees_paid, 0);
-    const feeStatus = unpaidAmount > 0 ? "Unpaid" : "Paid";
-    
-    console.log(`Fee Status: ${feeStatus}, Unpaid Amount: ${unpaidAmount}`);
-    return { feeStatus, unpaidAmount };
-};
 
   return (
     <Layout title="My-Coaching Management App : Students">
@@ -149,14 +85,10 @@ const Students = () => {
                 <th scope="col">Name</th>
                 <th scope="col">Phone</th>
                 <th scope="col">Date of Joining</th>
-                <th scope="col">Address</th>
-                <th scope="col">Fee Status</th>
-                <th scope="col">Unpaid Amount</th>
               </tr>
             </thead>
             <tbody>
               {studentData.map((student, index) => {
-                const { feeStatus, unpaidAmount } = calculateFeeStatus(student);
                 return (
                   <tr key={student.id}>
                     <th scope="row">{index + 1}</th>
@@ -165,18 +97,9 @@ const Students = () => {
                         {student.is_active ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td><NavLink to={`/student/${student._id}`}>{`${student.first_name} ${student.last_name}`}</NavLink></td>
+                    <td><NavLink to={`/student/${student._id}`}>{student.name}</NavLink></td>
                     <td>{student.phone_number}</td>
                     <td>{student.date_of_joining}</td>
-                    <td>
-                      {student.address.street}, {student.address.city}, {student.address.state}, {student.address.pincode}
-                    </td>
-                    <td>
-                      <span className={feeStatus === "Paid" ? "badge bg-success" : "badge bg-warning text-dark"}>
-                        {feeStatus}
-                      </span>
-                    </td>
-                    <td>{unpaidAmount}</td>
                   </tr>
                 );
               })}
