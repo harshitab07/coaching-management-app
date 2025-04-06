@@ -50,16 +50,24 @@ const Header = () => {
                   className="btn btn-sm btn-outline-primary"
                   type="button"
                 >
-                  <NavLink to="/students" className="nav-link">
-                    Students
+                  <NavLink to="/active-students" className="nav-link">
+                    Active Students
                   </NavLink>
                 </button>
                 <button
                   className="btn btn-sm btn-outline-primary"
                   type="button"
                 >
-                  <NavLink to="/teachers" className="nav-link">
-                    Teachers
+                  <NavLink to="/completed-students" className="nav-link">
+                    Completed Students
+                  </NavLink>
+                </button>
+                <button
+                  className="btn btn-sm btn-outline-primary"
+                  type="button"
+                >
+                  <NavLink to="/left-students" className="nav-link">
+                    Left Students
                   </NavLink>
                 </button>
                 <button

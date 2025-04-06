@@ -17,7 +17,9 @@ function App() {
       <Route path='/register' element={<Register />} />
       <Route path='/login' element={<Login />} />
       <Route path='/forgot-password' element={<ForgotPassword />} />
-      <Route path='/students' element={<Students />} />
+      <Route path='/left-students' element={<Students />} />
+      <Route path='/active-students' element={<Students />} />
+      <Route path='/completed-students' element={<Students />} />
       <Route path='/teachers' element={<Teachers />} />
       <Route path='/student/:id' element={<Student />} />
     </Routes>
