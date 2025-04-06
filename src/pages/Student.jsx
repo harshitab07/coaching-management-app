@@ -48,7 +48,6 @@ const Student = () => {
         </ul>
 
         <div className="student_details_form d-flex flex-column justify-content-center">
-          <h3 className="text-center mb-3">Student Details</h3>
           <form>
             <div className="mb-3">
               <div className="row create_form_row_details">

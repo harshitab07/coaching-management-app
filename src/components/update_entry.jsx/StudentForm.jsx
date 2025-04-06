@@ -1,49 +1,69 @@
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import CreateStudentApi from "../../utils/createEntry/CreateStudentApi";
+import { useAuth } from "../../context/auth";
+import UpdateStudentApi from "../../utils/students/UpdateStudentApi";
 
 const StudentForm = ({data}) => {
-  const { first_name, last_name, address, phone_number, is_active } = data;
-  const [firstName, setFirstName] = useState(first_name);
-  const [lastName, setLastName] = useState(last_name);
+  const { name, father_name, adhaar_number, address, phone_number, status, course, date_of_joining, _id } = data;
+
+  const [studentName, setStudentName] = useState(name);
+  const [fatherName, setFatherName] = useState(father_name);
   const [phone, setPhone] = useState(phone_number);
-  const [street, setStreet] = useState(address?.street);
-  const [city, setCity] = useState(address?.city);
-  const [pinCode, setPinCode] = useState(address?.pincode);
-  const [isActive, setIsActive] = useState(is_active);
+  const [adhaarNumber, setAdhaarNumber] = useState(adhaar_number);
+  const [studentCourse, setStudentCourse] = useState(course);
+  const [studentAddress, setStudentAddress] = useState(address);
+  const [studentStatus, setStudentStatus] = useState(status);
+  const [doj, setDoj] = useState(date_of_joining);
+
+  const convertDate = (dateString) => {
+    if (dateString) {
+      const [day, month, year] = dateString.split("/");
+      return `${year}-${month}-${day}`;
+    }
+  };
 
   useEffect(() => {
-    setFirstName(first_name || '');
-    setLastName(last_name || '');
+    setStudentName(name || '');
+    setFatherName(father_name || '');
     setPhone(phone_number || '');
-    setStreet(address?.street || '');
-    setCity(address?.city || '');
-    setPinCode(address?.pincode || '');
-    setIsActive(is_active || false);
+    setAdhaarNumber(adhaar_number || '');
+    setStudentAddress(address || '');
+    setStudentCourse(course || '');
+    setStudentStatus(status || '');
+    const formattedDoj = convertDate(date_of_joining);
+    setDoj(formattedDoj || '');
   }, [ data ]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const address = {
-        'street' : street,
-        'city' : city,
-        'pincode': pinCode,
-        'state': state
-      }
+    const [auth] = useAuth();
 
-      const res = await CreateStudentApi(firstName, lastName, phone, address, isActive);
+  const convertDateToDisplayFormat = (dateString) => {
+    const [year, month, day] = dateString.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      if (!auth?.user) {
+            toast.error('Please login in with admin account');
+            return;
+          }
+      
+        const adminId = auth.user.id;
+      const updateDoj = convertDateToDisplayFormat(doj);
+      const res = await UpdateStudentApi(_id, studentName, fatherName, adhaarNumber, phone, studentCourse, studentStatus, updateDoj, studentAddress, adminId);
 
       if (!res.data.isResultCorrect) toast.error(res.data.message);
       else {
         toast.success('Student updated successfully!');
+        setInterval(() => window.location.reload(), 1000);
       }
     } catch (error) {
       console.log('Update student failed', { error });
       toast.error('Failed to update student');
     }
-}
-
+  }
   return (
     <form>
       <ToastContainer />
@@ -52,68 +72,84 @@ const StudentForm = ({data}) => {
       <div className="mb-3">
         <div className="row create_form_row">
           <div className="col">
-            <label htmlFor="first_name" className="form-label">
-              First Name
+            <label htmlFor="name" className="form-label">
+              Name
             </label>
             <input
               type="text"
               className="form-control"
-              placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="Name"
+              id="name"
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
             />
           </div>
           <div className="col">
-            <label htmlFor="last_name" className="form-label">
-              Last Name
+            <label htmlFor="father_name" className="form-label">
+              Father's Name
             </label>
             <input
               type="text"
               className="form-control"
-              id="last_name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              id="father_name"
+              value={fatherName}
+              onChange={(e) => setFatherName(e.target.value)}
             />
           </div>
         </div>
       </div>
       <div className="mb-3">
-        <label htmlFor="phone_number" className="form-label">
-          Phone Number
-        </label>
-        <input type="text" className="form-control" id="phone_number" value={phone} onChange={(e) => setPhone(e.target.value)} />
+        <div className="row create_form_row">
+          <div className="col">
+            <label htmlFor="phone_number" className="form-label">
+              Phone Number
+            </label>
+            <input type="text" className="form-control" id="phone_number" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </div>
+          <div className="col">
+            <label htmlFor="adhaar_number" className="form-label">
+              Adhaar Number
+            </label>
+            <input type="text" className="form-control" id="adhaar_number" value={adhaarNumber} onChange={(e) => setAdhaarNumber(e.target.value)} />
+          </div>
+        </div>
       </div>
       <div className="mb-3">
         <div className="row create_form_row">
           <div className="col">
-            <label htmlFor="street_name" className="form-label">
-              Street Name
+            <label htmlFor="course" className="form-label">
+              Course
             </label>
-            <input type="text" className="form-control" id="street_name" value={street} onChange={(e) => setStreet(e.target.value)} />
+            <input type="text" className="form-control" id="course" value={studentCourse} onChange={(e) => setStudentCourse(e.target.value)} />
           </div>
           <div className="col">
-            <label htmlFor="city" className="form-label">
+            <label htmlFor="status" className="form-label">
               City
             </label>
-            <input type="text" className="form-control" id="city" value={city} onChange={(e) => setCity(e.target.value)} />
+            <select 
+            className="form-select" 
+            id="status" 
+            value={studentStatus}
+            onChange={(e) => setStudentStatus(e.target.value)}
+          >
+            <option value="On-Going">On-Going</option>
+            <option value="Completed">Completed</option>
+            <option value="Left">Left</option>
+          </select>
           </div>
         </div>
       </div>
       <div className="mb-3">
-        <div className="row create_form_row">
-          <div className="col">
-            <label htmlFor="pin_code" className="form-label">
-              Pin Code
-            </label>
-            <input type="text" className="form-control" id="pin_code" value={pinCode} onChange={(e) => setPinCode(e.target.value)} />
-          </div>
-          <div className="col">
-            <label htmlFor="isActive" className="form-label">
-              Is Student Active?
-            </label>
-            <input type="text" className="form-control" id="isActive" value={isActive} onChange={(e) => setIsActive(e.target.value)} />
-          </div>
-        </div>
+      <label htmlFor="address" className="form-label">
+      Address
+    </label>
+    <input type="text" className="form-control" id="address" value={studentAddress} onChange={(e) => setStudentAddress(e.target.value)} />
+      </div>
+      <div className="mb-3">
+      <label htmlFor="doj" className="form-label">
+      Date of Joining
+    </label>
+    <input type="date" className="form-control" id="doj" value={doj} onChange={(e) => setDoj(e.target.value)} />
       </div>
       <button onClick={handleSubmit} class="btn btn-primary">Update Student</button>
     </form>

@@ -1,4 +1,3 @@
-import React from 'react';
 import axios from 'axios';
 
 const CreateStudentApi = async (name, adhaar_number, father_name, course, phone_number, address, date_of_joining, status, admin_id) => {

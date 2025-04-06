@@ -13,8 +13,7 @@ const StudentForm = () => {
   const [status, setStatus] = useState("On-Going");
   const [doj, setDoj] = useState("");
 
-    const [auth] = useAuth();
-    console.log(auth);
+  const [auth] = useAuth();
 
   const convertDateToDisplayFormat = (dateString) => {
     const [year, month, day] = dateString.split("-");
