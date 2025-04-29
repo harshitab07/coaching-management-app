@@ -11,10 +11,12 @@ import FetchCompletedStudentsApi from "../utils/students/FetchCompletedStudentsA
 const Students = () => {
   const location = useLocation();
   const [studentData, setStudentData] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchStudents = async () => {
-    setLoading(true); // start loading
+    setLoading(true);
     try {
       let res;
       if (location.pathname === "/active-students") {
@@ -31,22 +33,54 @@ const Students = () => {
         toast.error(res.data.message);
       } else {
         setStudentData(res.data.data.students);
+        setFilteredStudents(res.data.data.students);
       }
     } catch (error) {
       console.log("Students fetching failed", error);
       toast.error("Failed to fetch students");
     }
-    setLoading(false); // stop loading
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchStudents();
   }, [location.pathname]);
 
+  // Live filtering based on search query
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredStudents(studentData);
+    } else {
+      const filtered = studentData.filter(student =>
+        student.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredStudents(filtered);
+    }
+  }, [searchQuery, studentData]);
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setFilteredStudents(studentData);
+  };
+
   return (
     <Layout title="My-Coaching Management App : Students">
       <div className="d-flex flex-column justify-content-center align-items-center students_table">
         <h2 className="text-center text-primary mb-4">Student Data</h2>
+
+        <div className="mb-4 w-75 d-flex justify-content-between align-items-center">
+          <input
+            type="text"
+            className="form-control me-2"
+            placeholder="Search by name"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ maxWidth: "250px" }}
+          />
+          <button className="btn btn-primary" onClick={handleReset}>
+            All Students
+          </button>
+        </div>
 
         {loading ? (
           <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
@@ -67,7 +101,7 @@ const Students = () => {
                 </tr>
               </thead>
               <tbody>
-                {studentData.map((student, index) => (
+                {filteredStudents.map((student, index) => (
                   <tr key={student._id}>
                     <th scope="row">{index + 1}</th>
                     <td>
