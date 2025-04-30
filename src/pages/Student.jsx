@@ -8,9 +8,15 @@ import UpdateEntryButton from "../components/update_entry.jsx/UpdateEntryButton"
 import FeesTable from "../components/FeesTable";
 
 const Student = () => {
+  const allMonths = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
   const params = useParams();
   const id = params.id;
   const [studentData, setStudentData] = useState([]);
+  const [month, setMonth] = useState('');
 
   const fetchStudent = async () => {
     try {
@@ -18,6 +24,10 @@ const Student = () => {
       if (!res.data.success) toast.error(res.data.message);
       else {
         setStudentData(res.data.data);
+        const doj = res.data.data.date_of_joining;
+        const parts = doj?.split('/');
+        let monthIndex = parseInt(parts[1], 10) - 1;
+        setMonth(allMonths[monthIndex]);
       }
     } catch (error) {
       console.log("Student fetching failed", { error });
@@ -35,7 +45,6 @@ const Student = () => {
     adhaar_number,
     course,
     date_of_joining,
-    status,
   } = studentData;
 
   return (
@@ -67,7 +76,7 @@ const Student = () => {
         </div>
       </div>
 
-      <FeesTable joinMonth='March' />
+      <FeesTable joinMonth={month} />
     </Layout>
   );
 };

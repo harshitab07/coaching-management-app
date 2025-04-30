@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../components/layout/layout';
-import TotalCounts from '../components/totalCounts';
+import TotalCounts from '../components/TotalCounts';
 import '../styles/dashboard.css';
 import '../styles/CreateEntry.css';
 import CreateNewEntryButton from '../components/new_entry/CreateNewEntryButton';

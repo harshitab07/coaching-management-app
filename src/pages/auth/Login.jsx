@@ -18,8 +18,7 @@ const Login = () => {
       e.preventDefault();
       try {
         const res = await LoginApi(email, password);
-
-        if (!res.data.success) toast.error(res.data.message);
+        if (!res.data.success || !res.data.isResultCorrect) toast.error(res.data.message);
         else {
           setAuth({
             ...auth,

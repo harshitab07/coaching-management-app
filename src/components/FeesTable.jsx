@@ -3,6 +3,7 @@ import FetchStudentFeesApi from '../utils/students/FetchStudentFeesApi';
 import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 import UpdateStudentFeesApi from '../utils/students/UpdateStudentFessApi';
+import Spinner from './Spinner';
 
 const allMonths = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -12,10 +13,17 @@ const allMonths = [
 function FeesTable({ joinMonth }) {
   const params = useParams();
   const startIndex = allMonths.findIndex(m => m.toLowerCase() === joinMonth.toLowerCase());
-  const orderedMonths = [...allMonths.slice(startIndex), ...allMonths.slice(0, startIndex)];
 
   const [fees, setFees] = useState(Array(12).fill(''));
   const [editingIndex, setEditingIndex] = useState(null);
+  const [orderedMonths, setOrderedMonths] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Generate orderedMonths based on startIndex
+  useEffect(() => {
+    const newOrderedMonths = [...allMonths.slice(startIndex), ...allMonths.slice(0, startIndex)];
+    setOrderedMonths(newOrderedMonths);
+  }, [startIndex]);
 
   const fetchStudentFees = async () => {
     try {
@@ -33,6 +41,13 @@ function FeesTable({ joinMonth }) {
     }
   };
 
+  useEffect(() => {
+    if (orderedMonths.length > 0) {
+      fetchStudentFees();
+      setLoading(false);
+    }
+  }, [orderedMonths]);
+
   const updateStudentFees = async (month, fee) => {
     try {
       const id = params.id;
@@ -43,10 +58,6 @@ function FeesTable({ joinMonth }) {
       toast.error("Failed to update student's fees");
     }
   };
-
-  useEffect(() => {
-    fetchStudentFees();
-  }, []);
 
   const handleFeeChange = (index, value) => {
     const newFees = [...fees];
@@ -75,55 +86,57 @@ function FeesTable({ joinMonth }) {
     return '';
   };
   
-  return (
+  return loading ? (
+    <Spinner message="Loading fees data..." />
+  ) : (
     <div className="fees-table-component">
-    <h3>Student Fees Table</h3>
-    <table className="fees-table">
-      <thead>
-        <tr>
-          <th>Month</th>
-          <th>Fees</th>
-        </tr>
-      </thead>
-      <tbody>
-        {orderedMonths.map((month, index) => (
-          <tr key={month}>
-            <td>{month}</td>
-            <td
-              className={getCellClass(index)}
-              onClick={() => {
-                if (fees[index] === '') {
+      <h3>Student Fees Table</h3>
+      <table className="fees-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Fees</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orderedMonths.map((month, index) => (
+            <tr key={month}>
+              <td>{month}</td>
+              <td
+                className={getCellClass(index)}
+                onClick={() => {
+                  if (fees[index] === '') {
                     const newFees = [...fees];
                     newFees[index] = '';
                     setFees(newFees);
-                }
-                setEditingIndex(index);
-              }}
-            >
-              {editingIndex === index ? (
-                <input
-                  type="number"
-                  min={0}
-                  value={fees[index]}
-                  onChange={(e) => handleFeeChange(index, e.target.value)}
-                  onBlur={() => {
-                    setEditingIndex(null);
-                    const month = orderedMonths[index];
-                    const fee = fees[index];
-                    if (fee !== '') updateStudentFees(month, fee);
-                  }}
-                  autoFocus
-                />
-              ) : (
-                fees[index] || 'Click to enter fee'
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+                  }
+                  setEditingIndex(index);
+                }}
+              >
+                {editingIndex === index ? (
+                  <input
+                    type="number"
+                    min={0}
+                    value={fees[index]}
+                    onChange={(e) => handleFeeChange(index, e.target.value)}
+                    onBlur={() => {
+                      setEditingIndex(null);
+                      const month = orderedMonths[index];
+                      const fee = fees[index];
+                      if (fee !== '') updateStudentFees(month, fee);
+                    }}
+                    autoFocus
+                  />
+                ) : (
+                  fees[index] || 'Click to enter fee'
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
-  );
+  );  
 }
 
 export default FeesTable;
