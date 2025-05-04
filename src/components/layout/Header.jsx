@@ -51,13 +51,6 @@ const Header = () => {
                 </button>
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink to="/register" className="nav-link">
-                <button className="btn btn-sm btn-outline-secondary w-100">
-                  Sign Up
-                </button>
-              </NavLink>
-            </li>
           </>
         ) : (
           <>
