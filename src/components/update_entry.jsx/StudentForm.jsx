@@ -204,7 +204,8 @@ const StudentForm = ({ data }) => {
               Admission Fees
             </label>
             <input
-              className="form-select"
+              type="text"
+              className="form-control"
               id="admission_fees"
               value={admissionFees}
               onChange={(e) =>
