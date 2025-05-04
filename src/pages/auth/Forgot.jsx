@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Layout from "../../components/layout/layout";
 import '../../styles/auth.css';
+import ForgetPasswordApi from "../../utils/auth/ForgetPasswordApi";
 
 const ForgotPassword = () => {
   const [ email, setEmail ] = useState('');
@@ -15,9 +15,9 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
       e.preventDefault();
       try {
-        const res = await axios.post('/api/v1/auth/forgot-password', { email, answer, password });
+        const res = await ForgetPasswordApi(email, password, answer);
 
-        if (!res.data.success) toast.error(res.data.message);
+        if (!res.data.success || !res.data.isResultCorrect) toast.error(res.data.message);
         else {
           toast.success('Password changed successfully!');
           setTimeout(() => navigate('/login'), 2000 );
