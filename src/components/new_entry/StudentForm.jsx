@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 import CreateStudentApi from "../../utils/createEntry/CreateStudentApi";
 import { useAuth } from "../../context/auth";
+import { useNavigate } from "react-router-dom";
 
 const StudentForm = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [adhaarNumber, setAdhaarNumber] = useState("");
   const [fatherName, setFatherName] = useState("");
@@ -23,24 +25,43 @@ const StudentForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!auth?.user) {
-      toast.error('Please login in with admin account');
+      toast.error("Please login in with admin account");
       return;
     }
 
     const adminId = auth.user.id;
     try {
-      const dojConverted =  convertDateToDisplayFormat(doj);
-      const res = await CreateStudentApi(name, adhaarNumber, fatherName, course, phone, address, dojConverted, status, adminId);
+      const dojConverted = convertDateToDisplayFormat(doj);
+      const res = await CreateStudentApi(
+        name,
+        adhaarNumber,
+        fatherName,
+        course,
+        phone,
+        address,
+        dojConverted,
+        status,
+        adminId
+      );
 
       if (!res.data.isResultCorrect) toast.error(res.data.message);
       else {
-        toast.success('Student created successfully!');
+        const id = res.data.data._id;
+        toast.success("Student created successfully!");
+
+        const modalEl = document.querySelector(".modal.show");
+        if (modalEl && window.bootstrap?.Modal) {
+          const modalInstance = window.bootstrap.Modal.getInstance(modalEl);
+          modalInstance?.hide();
+        }
+
+        setTimeout(() => navigate(`/student/${id}`), 1000);
       }
     } catch (error) {
-      console.log('Create student failed', { error });
-      toast.error('Failed to create student');
+      console.log("Create student failed", { error });
+      toast.error("Failed to create student");
     }
-}
+  };
 
   return (
     <form>
@@ -79,13 +100,35 @@ const StudentForm = () => {
             <label htmlFor="adhaar_number" className="form-label">
               Adhaar Number
             </label>
-            <input type="text" className="form-control" id="adhaar_number" value={adhaarNumber} onChange={(e) => setAdhaarNumber(e.target.value)} />
+            <input
+              type="text"
+              className="form-control"
+              id="adhaar_number"
+              value={adhaarNumber}
+              onChange={(e) =>
+                setAdhaarNumber(e.target.value.replace(/\D/g, ""))
+              }
+              maxLength={12}
+              minLength={12}
+              pattern="\d{12}"
+              required
+            />
           </div>
           <div className="col">
             <label htmlFor="phone_number" className="form-label">
               Phone Number
             </label>
-            <input type="text" className="form-control" id="phone_number" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <input
+              type="text"
+              className="form-control"
+              id="phone_number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+              maxLength={10}
+              minLength={10}
+              pattern="\d{10}"
+              required
+            />
           </div>
         </div>
       </div>
@@ -95,27 +138,47 @@ const StudentForm = () => {
             <label htmlFor="course" className="form-label">
               Course
             </label>
-            <input type="text" className="form-control" id="course" value={course} onChange={(e) => setCourse(e.target.value)} />
+            <input
+              type="text"
+              className="form-control"
+              id="course"
+              value={course}
+              onChange={(e) => setCourse(e.target.value)}
+            />
           </div>
           <div className="col">
             <label htmlFor="doj" className="form-label">
               Date of Joining
             </label>
-            <input type="date" className="form-control" id="doj" value={doj} onChange={(e) => setDoj(e.target.value)} />
-          </div>   
+            <input
+              type="date"
+              className="form-control"
+              id="doj"
+              value={doj}
+              onChange={(e) => setDoj(e.target.value)}
+            />
+          </div>
         </div>
       </div>
       <div className="mb-3">
         <label htmlFor="address" className="form-label">
           Address
         </label>
-        <input type="text" className="form-control" id="address" value={address} onChange={(e) => setAddress(e.target.value)} />
+        <input
+          type="text"
+          className="form-control"
+          id="address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
       </div>
       <div className="mb-3">
-        <label htmlFor="status" className="form-label">Status</label>
-        <select 
-          className="form-select" 
-          id="status" 
+        <label htmlFor="status" className="form-label">
+          Status
+        </label>
+        <select
+          className="form-select"
+          id="status"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
         >
@@ -124,7 +187,9 @@ const StudentForm = () => {
           <option value="Left">Left</option>
         </select>
       </div>
-      <button onClick={handleSubmit} class="btn btn-primary">Create Student</button>
+      <button onClick={handleSubmit} class="btn btn-primary">
+        Create Student
+      </button>
     </form>
   );
 };

@@ -3,35 +3,33 @@ import { useState, useEffect, useContext, createContext } from 'react';
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({children}) => {
-    const [ auth, setAuth ] = useState({
-        user: null,
-        token: ""
-    });
+export const AuthProvider = ({ children }) => {
+  const [auth, setAuth] = useState({
+    user: null,
+    token: '',
+  });
 
-    // default axios
-    axios.defaults.headers.common['Authorization'] = auth?.token;
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const data = localStorage.getItem('auth');
+  useEffect(() => {
+    const data = localStorage.getItem('auth');
+    if (data) {
+      const parsed = JSON.parse(data);
+      setAuth(parsed);
+      axios.defaults.headers.common['Authorization'] = parsed.token;
+    }
+    setLoading(false);
+  }, []);
 
-        if (data) {
-            const parsed = JSON.parse(data);
-            setAuth({
-                ...auth,
-                user: parsed.user,
-                token: parsed.token
-            })
-        }
-    // eslint-disable-next-line
-    }, []);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-    return (
-        <AuthContext.Provider value={[auth, setAuth]}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider value={[auth, setAuth]}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-// custom hook
 export const useAuth = () => useContext(AuthContext);

@@ -19,69 +19,85 @@ const Header = () => {
 
   return (
     <>
-      <nav className="navbar bg-body-tertiary">
-        <div className="container flex-row">
-          <NavLink className="navbar-brand" to="/">
-            My-Coaching
-          </NavLink>
-          <form className="d-flex header-buttons">
-            {!auth.user ? (
-              <>
-                <button
-                  className="btn btn-sm btn-outline-secondary"
-                  type="button"
-                >
-                  <NavLink to="/login" className="nav-link">
-                    Log In
-                  </NavLink>
+<nav className="navbar navbar-expand-lg bg-body-tertiary">
+  <div className="container">
+    <NavLink className="navbar-brand" to="/">
+      My-Coaching
+    </NavLink>
+    
+    {/* Hamburger Toggle Button */}
+    <button
+      className="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span className="navbar-toggler-icon"></span>
+    </button>
+
+    {/* Collapsible Menu */}
+    <div className="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+
+        {!auth.user ? (
+          <>
+            <li className="nav-item">
+              <NavLink to="/login" className="nav-link">
+                <button className="btn btn-sm btn-outline-secondary w-100">
+                  Log In
                 </button>
-                <button
-                  className="btn btn-sm btn-outline-secondary"
-                  type="button"
-                >
-                  <NavLink to="/register" className="nav-link">
-                    Sign Up
-                  </NavLink>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/register" className="nav-link">
+                <button className="btn btn-sm btn-outline-secondary w-100">
+                  Sign Up
                 </button>
-              </>
-            ) : (
-              <>
-                <button
-                  className="btn btn-sm btn-outline-primary"
-                  type="button"
-                >
-                  <NavLink to="/active-students" className="nav-link">
-                    Active Students
-                  </NavLink>
+              </NavLink>
+            </li>
+          </>
+        ) : (
+          <>
+            <li className="nav-item">
+              <NavLink to="/active-students" className="nav-link">
+                <button className="btn btn-sm btn-outline-primary w-100">
+                  Active Students
                 </button>
-                <button
-                  className="btn btn-sm btn-outline-primary"
-                  type="button"
-                >
-                  <NavLink to="/completed-students" className="nav-link">
-                    Completed Students
-                  </NavLink>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/completed-students" className="nav-link">
+                <button className="btn btn-sm btn-outline-primary w-100">
+                  Completed Students
                 </button>
-                <button
-                  className="btn btn-sm btn-outline-primary"
-                  type="button"
-                >
-                  <NavLink to="/left-students" className="nav-link">
-                    Left Students
-                  </NavLink>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/left-students" className="nav-link">
+                <button className="btn btn-sm btn-outline-primary w-100">
+                  Left Students
                 </button>
-                <button
-                  className="btn btn-sm btn-outline-secondary"
-                  type="button"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
-              </>
-            )}
-          </form>
-        </div>
-      </nav>
+              </NavLink>
+            </li>
+            <li className="nav-item m-auto">
+              <button
+                className="btn btn-sm btn-outline-secondary w-100"
+                type="button"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </li>
+          </>
+        )}
+
+      </ul>
+    </div>
+  </div>
+</nav>
     </>
   );
 };
