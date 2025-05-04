@@ -10,6 +10,8 @@ const UpdateStudentApi = async (
   status,
   date_of_joining,
   address,
+  admission_fees,
+  gender,
   admin_id
 ) => {
   const response = await axios.post(
@@ -24,6 +26,8 @@ const UpdateStudentApi = async (
       course,
       address,
       status,
+      admission_fees,
+      gender,
       admin_id,
     },
     {
