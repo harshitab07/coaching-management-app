@@ -13,6 +13,8 @@ const StudentForm = ({ data }) => {
     status,
     course,
     date_of_joining,
+    admission_fees,
+    gender,
     _id,
   } = data;
 
@@ -24,6 +26,8 @@ const StudentForm = ({ data }) => {
   const [studentAddress, setStudentAddress] = useState(address);
   const [studentStatus, setStudentStatus] = useState(status);
   const [doj, setDoj] = useState(date_of_joining);
+  const [admissionFees, setAdmissionFees] = useState(admission_fees);
+  const [studentGender, setStudentGender] = useState(gender);
 
   const convertDate = (dateString) => {
     if (dateString) {
@@ -42,6 +46,8 @@ const StudentForm = ({ data }) => {
     setStudentStatus(status || "");
     const formattedDoj = convertDate(date_of_joining);
     setDoj(formattedDoj || "");
+    setAdmissionFees(admission_fees || "");
+    setStudentGender(gender || "");
   }, [data]);
 
   const [auth] = useAuth();
@@ -71,6 +77,8 @@ const StudentForm = ({ data }) => {
         studentStatus,
         updateDoj,
         studentAddress,
+        admissionFees,
+        studentGender,
         adminId
       );
 
@@ -185,6 +193,37 @@ const StudentForm = ({ data }) => {
               <option value="On-Going">On-Going</option>
               <option value="Completed">Completed</option>
               <option value="Left">Left</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div className="mb-3">
+        <div className="row create_form_row">
+          <div className="col">
+          <label htmlFor="admission_fees" className="form-label">
+              Admission Fees
+            </label>
+            <input
+              className="form-select"
+              id="admission_fees"
+              value={admissionFees}
+              onChange={(e) =>
+                setAdmissionFees(e.target.value.replace(/\D/g, ""))
+              }
+            />
+          </div>
+          <div className="col">
+            <label htmlFor="gender" className="form-label">
+              Gender
+            </label>
+            <select
+              className="form-select"
+              id="gender"
+              value={studentGender}
+              onChange={(e) => setStudentGender(e.target.value)}
+            >
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
             </select>
           </div>
         </div>
