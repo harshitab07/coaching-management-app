@@ -3,7 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "../../styles/auth.css";
 import Layout from "../../components/layout/layout";
-import RegisterApi from "../../utils/auth/registerApi";
+import RegisterApi from "../../utils/auth/RegisterApi";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
