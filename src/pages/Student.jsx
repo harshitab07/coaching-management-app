@@ -45,6 +45,8 @@ const Student = () => {
     adhaar_number,
     course,
     date_of_joining,
+    admission_fees,
+    gender,
   } = studentData;
 
   return (
@@ -69,6 +71,12 @@ const Student = () => {
           </div>
           <div>
             <span>Course:</span> {course || 'Tally Full Course'}
+          </div>
+          <div>
+            <span>Admission Fees:</span> Rs. {admission_fees || '500'}
+          </div>
+          <div>
+            <span>Gender:</span> {gender || '---'}
           </div>
           <div>
             <span>Date of Joining:</span> {date_of_joining || '27/04/203'}

@@ -11,9 +11,11 @@ const StudentForm = () => {
   const [fatherName, setFatherName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [course, setCourse] = useState("");
+  const [course, setCourse] = useState("Select Course");
   const [status, setStatus] = useState("On-Going");
   const [doj, setDoj] = useState("");
+  const [admissionFees, setAdmissionFees] = useState("");
+  const [gender, setGender] = useState("Select Gender");
 
   const [auth] = useAuth();
 
@@ -41,7 +43,9 @@ const StudentForm = () => {
         address,
         dojConverted,
         status,
-        adminId
+        adminId,
+        admissionFees,
+        gender
       );
 
       if (!res.data.isResultCorrect) toast.error(res.data.message);
@@ -138,13 +142,16 @@ const StudentForm = () => {
             <label htmlFor="course" className="form-label">
               Course
             </label>
-            <input
-              type="text"
-              className="form-control"
+            <select
+              className="form-select"
               id="course"
               value={course}
               onChange={(e) => setCourse(e.target.value)}
-            />
+            >
+              <option value="3 Months">3 Months</option>
+              <option value="6 Months">6 Months</option>
+              <option value="1 Year">1 Year</option>
+            </select>
           </div>
           <div className="col">
             <label htmlFor="doj" className="form-label">
@@ -156,6 +163,38 @@ const StudentForm = () => {
               id="doj"
               value={doj}
               onChange={(e) => setDoj(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="mb-3">
+        <div className="row create_form_row">
+          <div className="col">
+            <label htmlFor="gender" className="form-label">
+              Gender
+            </label>
+            <select
+              className="form-select"
+              id="gender"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+            >
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div className="col">
+            <label htmlFor="admission_fees" className="form-label">
+              Admission Fees
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="admission_fees"
+              value={admissionFees}
+              onChange={(e) =>
+                setAdmissionFees(e.target.value.replace(/\D/g, ""))
+              }
             />
           </div>
         </div>

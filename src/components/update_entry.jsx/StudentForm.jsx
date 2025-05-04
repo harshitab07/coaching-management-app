@@ -158,16 +158,19 @@ const StudentForm = ({ data }) => {
       <div className="mb-3">
         <div className="row create_form_row">
           <div className="col">
-            <label htmlFor="course" className="form-label">
+          <label htmlFor="course" className="form-label">
               Course
             </label>
-            <input
-              type="text"
-              className="form-control"
+            <select
+              className="form-select"
               id="course"
               value={studentCourse}
               onChange={(e) => setStudentCourse(e.target.value)}
-            />
+            >
+              <option value="3 Months">3 Months</option>
+              <option value="6 Months">6 Months</option>
+              <option value="1 Year">1 Year</option>
+            </select>
           </div>
           <div className="col">
             <label htmlFor="status" className="form-label">
