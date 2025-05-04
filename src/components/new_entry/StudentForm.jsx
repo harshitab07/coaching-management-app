@@ -11,7 +11,7 @@ const StudentForm = () => {
   const [fatherName, setFatherName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [course, setCourse] = useState("Select Course");
+  const [course, setCourse] = useState("Male");
   const [status, setStatus] = useState("On-Going");
   const [doj, setDoj] = useState("");
   const [admissionFees, setAdmissionFees] = useState("");

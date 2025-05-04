@@ -27,7 +27,7 @@ const StudentForm = ({ data }) => {
   const [studentStatus, setStudentStatus] = useState(status);
   const [doj, setDoj] = useState(date_of_joining);
   const [admissionFees, setAdmissionFees] = useState(admission_fees);
-  const [studentGender, setStudentGender] = useState(gender);
+  const [studentGender, setStudentGender] = useState(gender || "Male");
 
   const convertDate = (dateString) => {
     if (dateString) {
@@ -47,7 +47,7 @@ const StudentForm = ({ data }) => {
     const formattedDoj = convertDate(date_of_joining);
     setDoj(formattedDoj || "");
     setAdmissionFees(admission_fees || "");
-    setStudentGender(gender || "");
+    setStudentGender(gender || "Male");
   }, [data]);
 
   const [auth] = useAuth();
