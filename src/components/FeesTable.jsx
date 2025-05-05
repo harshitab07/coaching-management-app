@@ -79,6 +79,7 @@ function FeesTable({ joinMonth }) {
 
   const updateStudentFees = async (month, value, type = "fee") => {
     try {
+      setLoading(true);
       const id = params.id;
       const feeValue = fees[orderedMonths.indexOf(month)]; // Get the current fee value
 
@@ -99,6 +100,12 @@ function FeesTable({ joinMonth }) {
         payload.fee // send current fee for "date" type
       );      
       if (!res.data.success) toast.error(res.data.message);
+
+      if (res.data.success) {
+        await fetchStudentFees();
+      }
+
+      setLoading(false);
     } catch (error) {
       console.log("Student Fees update failed", { error });
       toast.error("Failed to update student's fees");
