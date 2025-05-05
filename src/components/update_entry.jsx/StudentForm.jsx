@@ -16,6 +16,7 @@ const StudentForm = ({ data }) => {
     admission_fees,
     gender,
     _id,
+    serial_number,
   } = data;
 
   const [studentName, setStudentName] = useState(name);
@@ -28,6 +29,7 @@ const StudentForm = ({ data }) => {
   const [doj, setDoj] = useState(date_of_joining);
   const [admissionFees, setAdmissionFees] = useState(admission_fees);
   const [studentGender, setStudentGender] = useState(gender || "Male");
+  const [serialNumber, setSerialNumber] = useState(serial_number);
 
   const convertDate = (dateString) => {
     if (dateString) {
@@ -48,6 +50,7 @@ const StudentForm = ({ data }) => {
     setDoj(formattedDoj || "");
     setAdmissionFees(admission_fees || "");
     setStudentGender(gender || "Male");
+    setSerialNumber(serial_number || "");
   }, [data]);
 
   const [auth] = useAuth();
@@ -79,7 +82,8 @@ const StudentForm = ({ data }) => {
         studentAddress,
         admissionFees,
         studentGender,
-        adminId
+        adminId,
+        serialNumber
       );
 
       if (!res.data.isResultCorrect) toast.error(res.data.message);
@@ -166,7 +170,7 @@ const StudentForm = ({ data }) => {
       <div className="mb-3">
         <div className="row create_form_row">
           <div className="col">
-          <label htmlFor="course" className="form-label">
+            <label htmlFor="course" className="form-label">
               Course
             </label>
             <select
@@ -200,7 +204,7 @@ const StudentForm = ({ data }) => {
       <div className="mb-3">
         <div className="row create_form_row">
           <div className="col">
-          <label htmlFor="admission_fees" className="form-label">
+            <label htmlFor="admission_fees" className="form-label">
               Admission Fees
             </label>
             <input
@@ -242,16 +246,33 @@ const StudentForm = ({ data }) => {
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="doj" className="form-label">
-          Date of Joining
-        </label>
-        <input
-          type="date"
-          className="form-control"
-          id="doj"
-          value={doj}
-          onChange={(e) => setDoj(e.target.value)}
-        />
+        <div className="row create_form_row">
+          <div className="col">
+            <label htmlFor="doj" className="form-label">
+              Date of Joining
+            </label>
+            <input
+              type="date"
+              className="form-control"
+              id="doj"
+              value={doj}
+              onChange={(e) => setDoj(e.target.value)}
+            />
+          </div>
+          <div className="col">
+            <label htmlFor="serial_number" className="form-label">
+              Serial Number
+            </label>
+            <input
+              className="form-control"
+              id="serial_number"
+              value={serialNumber}
+              onChange={(e) =>
+                setSerialNumber(e.target.value.replace(/\D/g, ""))
+              }
+            />
+          </div>
+        </div>
       </div>
       <button onClick={handleSubmit} class="btn btn-primary">
         Update Student

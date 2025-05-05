@@ -1,27 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import FetchStudentFeesApi from '../utils/students/FetchStudentFeesApi';
-import { toast } from 'react-toastify';
-import { useParams } from 'react-router-dom';
-import UpdateStudentFeesApi from '../utils/students/UpdateStudentFessApi';
-import Spinner from './Spinner';
+import React, { useEffect, useState } from "react";
+import FetchStudentFeesApi from "../utils/students/FetchStudentFeesApi";
+import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
+import UpdateStudentFeesApi from "../utils/students/UpdateStudentFessApi";
+import Spinner from "./Spinner";
 
 const allMonths = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 function FeesTable({ joinMonth }) {
   const params = useParams();
-  const startIndex = allMonths.findIndex(m => m.toLowerCase() === joinMonth.toLowerCase());
+  const startIndex = allMonths.findIndex(
+    (m) => m.toLowerCase() === joinMonth.toLowerCase()
+  );
 
-  const [fees, setFees] = useState(Array(12).fill(''));
+  const [fees, setFees] = useState(Array(12).fill(""));
+  const [paymentDates, setPaymentDates] = useState(Array(12).fill(""));
   const [editingIndex, setEditingIndex] = useState(null);
   const [orderedMonths, setOrderedMonths] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // Generate orderedMonths based on startIndex
+
   useEffect(() => {
-    const newOrderedMonths = [...allMonths.slice(startIndex), ...allMonths.slice(0, startIndex)];
+    const newOrderedMonths = [
+      ...allMonths.slice(startIndex),
+      ...allMonths.slice(0, startIndex),
+    ];
     setOrderedMonths(newOrderedMonths);
   }, [startIndex]);
 
@@ -31,9 +46,23 @@ function FeesTable({ joinMonth }) {
       const res = await FetchStudentFeesApi(id);
       if (!res.data.success) toast.error(res.data.message);
       else {
-        const fees = res.data.data.fees;
-        const orderedFeeValues = orderedMonths.map(month => fees[month] || '');
+        const { fees, paymentDates } = res.data.data;
+        const orderedFeeValues = orderedMonths.map(
+          (month) => fees[month] || ""
+        );
+        // const orderedDateValues = orderedMonths.map(month => (paymentDates?.[month]) || '');
+        const orderedDateValues = orderedMonths.map((month) => {
+          const rawDate = paymentDates?.[month];
+          if (!rawDate) return "";
+          const parsedDate = new Date(rawDate);
+          // If it's a valid date, format to yyyy-MM-dd
+          return isNaN(parsedDate)
+            ? ""
+            : parsedDate.toISOString().split("T")[0];
+        });
+
         setFees(orderedFeeValues);
+        setPaymentDates(orderedDateValues);
       }
     } catch (error) {
       console.log("Student Fees fetching failed", { error });
@@ -48,11 +77,35 @@ function FeesTable({ joinMonth }) {
     }
   }, [orderedMonths]);
 
-  const updateStudentFees = async (month, fee) => {
+  const updateStudentFees = async (month, value, type = "fee") => {
     try {
+      setLoading(true);
       const id = params.id;
-      const res = await UpdateStudentFeesApi(id, month, fee);
+      const feeValue = fees[orderedMonths.indexOf(month)]; // Get the current fee value
+
+      let payload;
+      if (type === "fee") {
+        payload = { id, month, fee: value };
+      } else if (type === "date") {
+        payload = { id, month, date: value, fee: feeValue }; // When updating date, include the fee value
+      } else if (type === "both") {
+        payload = { id, month, fee: value.fee, date: value.date }; // When updating both
+      }
+
+      const res = await UpdateStudentFeesApi(
+        payload.id,
+        payload.month,
+        type === "fee" ? payload.fee : payload.date,
+        type,
+        payload.fee // send current fee for "date" type
+      );      
       if (!res.data.success) toast.error(res.data.message);
+
+      if (res.data.success) {
+        await fetchStudentFees();
+      }
+
+      setLoading(false);
     } catch (error) {
       console.log("Student Fees update failed", { error });
       toast.error("Failed to update student's fees");
@@ -65,27 +118,31 @@ function FeesTable({ joinMonth }) {
     setFees(newFees);
   };
 
+  const handleDateChange = (index, value) => {
+    const newDates = [...paymentDates];
+    newDates[index] = value;
+    setPaymentDates(newDates);
+  };
+
   const getCellClass = (index) => {
     const feeEntered = fees[index];
-    if (feeEntered) return 'fee-paid';
-  
+    if (feeEntered) return "fee-paid";
+
     const rowMonthIndex = (startIndex + index) % 12;
     const currentMonthIndex = new Date().getMonth();
 
-    const hasMonthPassed = (
+    const hasMonthPassed =
       (startIndex <= currentMonthIndex &&
         rowMonthIndex < currentMonthIndex &&
-        rowMonthIndex >= startIndex)
-      ||
+        rowMonthIndex >= startIndex) ||
       (startIndex > currentMonthIndex &&
-        (rowMonthIndex >= startIndex || rowMonthIndex < currentMonthIndex))
-    );
-  
-    if (hasMonthPassed) return 'fee-missing';
-  
-    return '';
+        (rowMonthIndex >= startIndex || rowMonthIndex < currentMonthIndex));
+
+    if (hasMonthPassed) return "fee-missing";
+
+    return "";
   };
-  
+
   return loading ? (
     <Spinner message="Loading fees data..." />
   ) : (
@@ -96,24 +153,20 @@ function FeesTable({ joinMonth }) {
           <tr>
             <th>Month</th>
             <th>Fees</th>
+            <th>Date</th>
           </tr>
         </thead>
         <tbody>
           {orderedMonths.map((month, index) => (
             <tr key={month}>
               <td>{month}</td>
+
+              {/* Fee Cell */}
               <td
                 className={getCellClass(index)}
-                onClick={() => {
-                  if (fees[index] === '') {
-                    const newFees = [...fees];
-                    newFees[index] = '';
-                    setFees(newFees);
-                  }
-                  setEditingIndex(index);
-                }}
+                onClick={() => setEditingIndex(`fee-${index}`)}
               >
-                {editingIndex === index ? (
+                {editingIndex === `fee-${index}` ? (
                   <input
                     type="number"
                     min={0}
@@ -121,14 +174,32 @@ function FeesTable({ joinMonth }) {
                     onChange={(e) => handleFeeChange(index, e.target.value)}
                     onBlur={() => {
                       setEditingIndex(null);
-                      const month = orderedMonths[index];
-                      const fee = fees[index];
-                      if (fee !== '') updateStudentFees(month, fee);
+                      if (fees[index] !== "")
+                        updateStudentFees(month, fees[index], "fee");
                     }}
                     autoFocus
                   />
                 ) : (
-                  fees[index] || 'Click to enter fee'
+                  fees[index] || "Click to enter fee"
+                )}
+              </td>
+
+              {/* Date Cell */}
+              <td onClick={() => setEditingIndex(`date-${index}`)}>
+                {editingIndex === `date-${index}` ? (
+                  <input
+                    type="date"
+                    value={paymentDates[index]}
+                    onChange={(e) => handleDateChange(index, e.target.value)}
+                    onBlur={(e) => {
+                      const value = e.target.value;
+                      if (value) updateStudentFees(month, value, "date");
+                      setEditingIndex(null);
+                    }}
+                    autoFocus
+                  />
+                ) : (
+                  paymentDates[index] || "Add Date"
                 )}
               </td>
             </tr>
@@ -136,7 +207,7 @@ function FeesTable({ joinMonth }) {
         </tbody>
       </table>
     </div>
-  );  
+  );
 }
 
 export default FeesTable;

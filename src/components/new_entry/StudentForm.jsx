@@ -11,11 +11,12 @@ const StudentForm = () => {
   const [fatherName, setFatherName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [course, setCourse] = useState("Male");
+  const [course, setCourse] = useState("3 Months");
   const [status, setStatus] = useState("On-Going");
   const [doj, setDoj] = useState("");
   const [admissionFees, setAdmissionFees] = useState("");
-  const [gender, setGender] = useState("Select Gender");
+  const [gender, setGender] = useState("Male");
+  const [serialNumber, setSerialNumber] = useState("");
 
   const [auth] = useAuth();
 
@@ -45,7 +46,8 @@ const StudentForm = () => {
         status,
         adminId,
         admissionFees,
-        gender
+        gender,
+        serialNumber
       );
 
       if (!res.data.isResultCorrect) toast.error(res.data.message);
@@ -212,7 +214,9 @@ const StudentForm = () => {
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="status" className="form-label">
+        <div className="row create_form_row">
+          <div className="col">
+          <label htmlFor="status" className="form-label">
           Status
         </label>
         <select
@@ -225,6 +229,20 @@ const StudentForm = () => {
           <option value="Completed">Completed</option>
           <option value="Left">Left</option>
         </select>
+          </div>
+          <div class="col">
+            <label htmlFor="serial_number" className="form-label">Serial Number</label>
+            <input
+              type="text"
+              className="form-control"
+              id="serial_number"
+              value={serialNumber}
+              onChange={(e) =>
+                setSerialNumber(e.target.value.replace(/\D/g, ""))
+              }
+            />
+            </div>
+        </div>
       </div>
       <button onClick={handleSubmit} class="btn btn-primary">
         Create Student
