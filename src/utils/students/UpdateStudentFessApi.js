@@ -1,15 +1,23 @@
 import axios from "axios";
 
-const UpdateStudentFeesApi = async (_id, month, value, type, feeValue = null) => {
+const UpdateStudentFeesApi = async (
+  _id,
+  month,
+  value,
+  type,
+  feeValue = null
+) => {
   // Determine the payload based on the update type
   let payload = {};
 
-  if (type === 'fee') {
+  if (type === "fee") {
     payload = { _id, month, fees: value }; // For updating only the fee
-  } else if (type === 'date') {
+  } else if (type === "date") {
     payload = { _id, month, date: value, fees: feeValue }; // For updating only the date (include the current fee)
-  } else if (type === 'both') {
+  } else if (type === "both") {
     payload = { _id, month, fees: value.fee, date: value.date }; // For updating both fee and date
+  } else if (type === "remark") {
+    payload = { _id, month, remark: value };
   }
 
   console.log("Sending payload to backend:", payload);

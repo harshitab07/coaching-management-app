@@ -186,7 +186,7 @@ const StudentForm = ({ data }) => {
           </div>
           <div className="col">
             <label htmlFor="status" className="form-label">
-              City
+              Status
             </label>
             <select
               className="form-select"

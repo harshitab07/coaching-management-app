@@ -31,6 +31,7 @@ function FeesTable({ joinMonth }) {
   const [editingIndex, setEditingIndex] = useState(null);
   const [orderedMonths, setOrderedMonths] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [remarks, setRemarks] = useState(Array(12).fill(""));
 
   useEffect(() => {
     const newOrderedMonths = [
@@ -46,11 +47,16 @@ function FeesTable({ joinMonth }) {
       const res = await FetchStudentFeesApi(id);
       if (!res.data.success) toast.error(res.data.message);
       else {
-        const { fees, paymentDates } = res.data.data;
+        const { fees, paymentDates, remarks } = res.data.data;
+        console.log("Fetched fees data:", res.data.data);
         const orderedFeeValues = orderedMonths.map(
           (month) => fees[month] || ""
         );
-        // const orderedDateValues = orderedMonths.map(month => (paymentDates?.[month]) || '');
+
+        const orderedRemarkValues = orderedMonths.map(
+          (month) => remarks?.[month] || ""
+        );
+
         const orderedDateValues = orderedMonths.map((month) => {
           const rawDate = paymentDates?.[month];
           if (!rawDate) return "";
@@ -63,6 +69,8 @@ function FeesTable({ joinMonth }) {
 
         setFees(orderedFeeValues);
         setPaymentDates(orderedDateValues);
+        setRemarks(orderedRemarkValues);
+
       }
     } catch (error) {
       console.log("Student Fees fetching failed", { error });
@@ -90,15 +98,24 @@ function FeesTable({ joinMonth }) {
         payload = { id, month, date: value, fee: feeValue }; // When updating date, include the fee value
       } else if (type === "both") {
         payload = { id, month, fee: value.fee, date: value.date }; // When updating both
+      } else if (type === "remark") {
+        payload = { id, month, remark: value };
       }
 
       const res = await UpdateStudentFeesApi(
         payload.id,
         payload.month,
-        type === "fee" ? payload.fee : payload.date,
+        type === "fee"
+          ? payload.fee
+          : type === "date"
+          ? payload.date
+          : type === "remark"
+          ? payload.remark
+          : value, // fallback
         type,
-        payload.fee // send current fee for "date" type
-      );      
+        payload.fee // this extra param is only relevant if your API expects fee when updating date
+      );
+
       if (!res.data.success) toast.error(res.data.message);
 
       if (res.data.success) {
@@ -154,6 +171,7 @@ function FeesTable({ joinMonth }) {
             <th>Month</th>
             <th>Fees</th>
             <th>Date</th>
+            <th>Remarks</th>
           </tr>
         </thead>
         <tbody>
@@ -200,6 +218,30 @@ function FeesTable({ joinMonth }) {
                   />
                 ) : (
                   paymentDates[index] || "Add Date"
+                )}
+              </td>
+
+              {/* Remarks Cell */}
+              <td onClick={() => setEditingIndex(`remark-${index}`)}>
+                {editingIndex === `remark-${index}` ? (
+                  <input
+                    type="text"
+                    value={remarks[index]}
+                    onChange={(e) => {
+                      const newRemarks = [...remarks];
+                      newRemarks[index] = e.target.value;
+                      setRemarks(newRemarks);
+                    }}
+                    onBlur={(e) => {
+                      const value = e.target.value;
+                      if (value !== "")
+                        updateStudentFees(month, value, "remark");
+                      setEditingIndex(null);
+                    }}
+                    autoFocus
+                  />
+                ) : (
+                  remarks[index] || "Add Remark"
                 )}
               </td>
             </tr>
