@@ -32,8 +32,12 @@ const Students = () => {
       if (!res.data.success) {
         toast.error(res.data.message);
       } else {
-        setStudentData(res.data.data.students);
-        setFilteredStudents(res.data.data.students);
+       
+        const sortedStudents = res.data.data.students.sort(
+          (a, b) => a.serial_number - b.serial_number
+        );
+        setStudentData(sortedStudents);
+        setFilteredStudents(sortedStudents);
       }
     } catch (error) {
       console.log("Students fetching failed", error);
@@ -51,7 +55,7 @@ const Students = () => {
     if (searchQuery.trim() === "") {
       setFilteredStudents(studentData);
     } else {
-      const filtered = studentData.filter(student =>
+      const filtered = studentData.filter((student) =>
         student.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredStudents(filtered);
@@ -83,7 +87,10 @@ const Students = () => {
         </div>
 
         {loading ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+          <div
+            className="d-flex justify-content-center align-items-center"
+            style={{ height: "200px" }}
+          >
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
@@ -101,9 +108,9 @@ const Students = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredStudents.map((student, index) => (
+                {filteredStudents.map((student) => (
                   <tr key={student._id}>
-                    <th scope="row">{index + 1}</th>
+                    <th scope="row">{student.serial_number}</th>
                     <td>
                       <NavLink to={`/student/${student._id}`}>
                         {student.name}
