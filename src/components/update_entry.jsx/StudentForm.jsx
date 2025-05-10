@@ -17,6 +17,7 @@ const StudentForm = ({ data }) => {
     gender,
     _id,
     serial_number,
+    monthly_fees
   } = data;
 
   const [studentName, setStudentName] = useState(name);
@@ -30,6 +31,7 @@ const StudentForm = ({ data }) => {
   const [admissionFees, setAdmissionFees] = useState(admission_fees);
   const [studentGender, setStudentGender] = useState(gender || "Male");
   const [serialNumber, setSerialNumber] = useState(serial_number);
+  const [monthlyFess, setMonthlyFees] = useState(monthly_fees);
 
   const convertDate = (dateString) => {
     if (dateString) {
@@ -51,6 +53,7 @@ const StudentForm = ({ data }) => {
     setAdmissionFees(admission_fees || "");
     setStudentGender(gender || "Male");
     setSerialNumber(serial_number || "");
+    setMonthlyFees(monthly_fees || "");
   }, [data]);
 
   const [auth] = useAuth();
@@ -83,7 +86,8 @@ const StudentForm = ({ data }) => {
         admissionFees,
         studentGender,
         adminId,
-        serialNumber
+        serialNumber,
+        monthlyFess
       );
 
       if (!res.data.isResultCorrect) toast.error(res.data.message);
@@ -246,6 +250,20 @@ const StudentForm = ({ data }) => {
         />
       </div>
       <div className="mb-3">
+        <label htmlFor="monthly_fees" className="form-label">
+          Monthly Fess
+        </label>
+        <input
+          type="text"
+          className="form-control"
+          id="monthly_fees"
+          value={monthlyFess}
+          onChange={(e) =>
+            setMonthlyFees(e.target.value.replace(/\D/g, ""))
+          }
+        />
+      </div>
+      <div className="mb-3">
         <div className="row create_form_row">
           <div className="col">
             <label htmlFor="doj" className="form-label">
@@ -274,7 +292,7 @@ const StudentForm = ({ data }) => {
           </div>
         </div>
       </div>
-      <button onClick={handleSubmit} class="btn btn-primary">
+      <button onClick={handleSubmit} className="btn btn-primary">
         Update Student
       </button>
     </form>

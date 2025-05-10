@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const CreateStudentApi = async (name, adhaar_number, father_name, course, phone_number, address, date_of_joining, status, admin_id, admission_fees, gender, serial_number) => {
+const CreateStudentApi = async (name, adhaar_number, father_name, course, phone_number, address, date_of_joining, status, admin_id, admission_fees, gender, serial_number, monthly_fees) => {
     const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/v1/students/create-student`,
         {
@@ -15,7 +15,8 @@ const CreateStudentApi = async (name, adhaar_number, father_name, course, phone_
           admin_id,
           admission_fees,
           gender,
-          serial_number
+          serial_number,
+          monthly_fees
         },
         {
           headers: {

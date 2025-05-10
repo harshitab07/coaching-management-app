@@ -13,7 +13,8 @@ const UpdateStudentApi = async (
   admission_fees,
   gender,
   admin_id,
-  serial_number
+  serial_number,
+  monthly_fees
 ) => {
   const response = await axios.post(
     `${import.meta.env.VITE_API_URL}/api/v1/students/update-student`,
@@ -30,7 +31,8 @@ const UpdateStudentApi = async (
       admission_fees,
       gender,
       admin_id,
-      serial_number
+      serial_number,
+      monthly_fees
     },
     {
       headers: {

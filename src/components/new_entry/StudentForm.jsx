@@ -15,6 +15,7 @@ const StudentForm = () => {
   const [status, setStatus] = useState("On-Going");
   const [doj, setDoj] = useState("");
   const [admissionFees, setAdmissionFees] = useState("");
+  const [monthlyFess, setMonthlyFees] = useState("");
   const [gender, setGender] = useState("Male");
   const [serialNumber, setSerialNumber] = useState("");
 
@@ -47,7 +48,8 @@ const StudentForm = () => {
         adminId,
         admissionFees,
         gender,
-        serialNumber
+        serialNumber,
+        monthlyFess
       );
 
       if (!res.data.isResultCorrect) toast.error(res.data.message);
@@ -214,6 +216,20 @@ const StudentForm = () => {
         />
       </div>
       <div className="mb-3">
+        <label htmlFor="monthly_fees" className="form-label">
+          Monthly Fess
+        </label>
+        <input
+          type="text"
+          className="form-control"
+          id="monthly_fees"
+          value={monthlyFess}
+          onChange={(e) =>
+            setMonthlyFees(e.target.value.replace(/\D/g, ""))
+          }
+        />
+      </div>
+      <div className="mb-3">
         <div className="row create_form_row">
           <div className="col">
           <label htmlFor="status" className="form-label">
@@ -230,7 +246,7 @@ const StudentForm = () => {
           <option value="Left">Left</option>
         </select>
           </div>
-          <div class="col">
+          <div className="col">
             <label htmlFor="serial_number" className="form-label">Serial Number</label>
             <input
               type="text"
@@ -244,7 +260,7 @@ const StudentForm = () => {
             </div>
         </div>
       </div>
-      <button onClick={handleSubmit} class="btn btn-primary">
+      <button onClick={handleSubmit} className="btn btn-primary">
         Create Student
       </button>
     </form>
