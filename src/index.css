@@ -27,3 +27,7 @@ body {
   color: #ffefbf;
   border-bottom: 1px solid #ffefbf;
 }
+
+button:disabled {
+  cursor: not-allowed !important;
+}

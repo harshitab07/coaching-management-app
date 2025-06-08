@@ -7,6 +7,7 @@ import "../styles/studentDetails.css";
 import UpdateEntryButton from "../components/update_entry.jsx/UpdateEntryButton";
 import FeesTable from "../components/FeesTable";
 import DeleteStudentApi from "../utils/students/DeleteStudentApi";
+import { useAuth } from "../context/auth";
 
 const Student = () => {
   const allMonths = [
@@ -25,6 +26,7 @@ const Student = () => {
   ];
 
   const params = useParams();
+  const [auth] = useAuth();
   const navigate = useNavigate();
   const id = params.id;
   const [studentData, setStudentData] = useState([]);
@@ -74,6 +76,11 @@ const Student = () => {
     }
   };
 
+  if (!auth?.user) {
+    toast.error("Please login in with admin account");
+    return;
+  }
+
   return (
     <Layout>
       <ToastContainer />
@@ -91,6 +98,7 @@ const Student = () => {
                   deleteStudentApi();
                 }
               }}
+              disabled={!auth?.user?.is_super_admin}
             >
               Delete Student
             </button>

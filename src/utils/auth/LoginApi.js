@@ -15,6 +15,8 @@ const LoginApi = async ( email, password) => {
           },
         }
       );
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
       return response;
     } catch (error) {
       console.error('Error registering user:', error);
