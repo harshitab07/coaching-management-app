@@ -85,3 +85,23 @@ border: 5px solid #dc3545;
         gap: 2rem;
     }
 }
+
+.pending-fees-table {
+  max-height: 400px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.pending-fees-table table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Make the thead sticky */
+.pending-fees-table table thead {
+  position: sticky;
+  top: 0;
+  background-color: #0d6efd; /* Bootstrap primary */
+  color: white;
+  z-index: 1;
+}
